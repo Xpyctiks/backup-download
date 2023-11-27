@@ -1,0 +1,121 @@
+zabbix_export:
+  version: '6.0'
+  date: '2022-09-21T09:33:14Z'
+  groups:
+    -
+      uuid: dc579cd7a1a34222933f24f52a68bcd8
+      name: 'Linux servers'
+    -
+      uuid: b9390195ecad4986968746a2a9b56354
+      name: 'My Templates'
+    -
+      uuid: 6f6799aa69e844b4b3918f779f2abf08
+      name: 'Zabbix servers'
+  templates:
+    -
+      uuid: c7ee7e85beb14668a8abc76a2de83dcb
+      template: 'Daily backup monitoring'
+      name: 'Daily backup monitoring'
+      groups:
+        -
+          name: 'Linux servers'
+        -
+          name: 'My Templates'
+        -
+          name: 'Zabbix servers'
+      items:
+        -
+          uuid: ffc1a21ebc3c4e709672bf6fc734f659
+          name: 'Daily backup successfull downloading'
+          type: EXTERNAL
+          key: 'get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"]'
+          delay: 24h;wd1-6h10
+          history: 365d
+          tags:
+            -
+              tag: Application
+              value: 'Backup monitoring'
+          triggers:
+            -
+              uuid: 5f2e684df4d34f7a8c432f0a0c569d9e
+              expression: 'length(last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"]))=0'
+              name: 'Daily backup - script has returned an empty answer!'
+              priority: AVERAGE
+              manual_close: 'YES'
+            -
+              uuid: 406b778615e04e4a970f59947715340e
+              expression: |
+                length(last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"]))<>2 and 
+                last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"])=2
+              name: 'Daily backup checksum error!'
+              priority: AVERAGE
+              manual_close: 'YES'
+            -
+              uuid: 406b778615e04e4a970f59947715340f
+              expression: |
+                length(last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"]))<>0 and
+                last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"])=1
+              name: 'Daily backup download failed'
+              priority: AVERAGE
+              manual_close: 'YES'
+            -
+              uuid: 406b778615e04e4a970f59947715340d
+              expression: |
+                length(last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"]))<>0 and 
+                last(/Daily backup monitoring/get-mysql-backup-status.sh["todayLog", "{HOSTNAME}"])=255
+              name: 'Daily backup unexpected error!'
+              priority: AVERAGE
+              manual_close: 'YES'
+    -
+      uuid: 125005d413424cd1ad7dd7dacf63773c
+      template: 'Weekly backup monitoring'
+      name: 'Weekly backup monitoring'
+      groups:
+        -
+          name: 'Linux servers'
+        -
+          name: 'My Templates'
+        -
+          name: 'Zabbix servers'
+      items:
+        -
+          uuid: 614c4162d537486aac1ea2ade269cd26
+          name: 'Weekly backup successfull downloading'
+          type: EXTERNAL
+          key: 'get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"]'
+          delay: 0;wd7h11
+          history: 365d
+          tags:
+            -
+              tag: Application
+              value: 'Backup monitoring'
+          triggers:
+            -
+              uuid: 161c42f3ef7a422ca15e01fae0b15364
+              expression: 'length(last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"]))=0'
+              name: 'Weekly backup - script has returned an empty answer!'
+              priority: AVERAGE
+            -
+              uuid: 9e27d71e1d214e66b6101f25b183d864
+              expression: |
+                length(last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"]))<>0 and 
+                last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"])=2
+              name: 'Weekly backup checksum error!'
+              priority: AVERAGE
+              manual_close: 'YES'
+            -
+              uuid: 9e27d71e1d214e66b6101f25b183d863
+              expression: |
+                length(last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"]))<>0 and 
+                last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"])=1
+              name: 'Weekly backup download failed'
+              priority: AVERAGE
+              manual_close: 'YES'
+            -
+              uuid: 9e27d71e1d214e66b6101f25b183d865
+              expression: |
+                length(last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"]))<>0 and 
+                last(/Weekly backup monitoring/get-mysql-backup-status.sh["weeklyLog", "{HOSTNAME}"])=255
+              name: 'Weekly backup unexpected error!'
+              priority: AVERAGE
+              manual_close: 'YES'
