@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#release 1.4.112
 NAME=$(/bin/date '+%d.%m.%Y')           #Name of current folder for download - created from current datestamp.
 Color_Off='\033[0m'
 Red='\033[0;31m'

@@ -1,5 +1,6 @@
 #!/bin/env bash
 
+#release 1.4.112
 DATE=$(/bin/date '+%d.%m.%Y %H:%M:%S') #Date to use for logging.
 NAME=$(/bin/date '+%d.%m.%Y')          #Name for folders we are working with.
 Color_Off='\033[0m'
