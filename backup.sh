@@ -123,7 +123,8 @@ if [[ -z "${1}" ]]; then
     sendTelegram "No parameters defined!"
   fi
   exit 1
-elif [[ "${1}" != "daily" ]] && [[ "${1}" != "weekly" ]]; then
+fi
+if [[ "${1}" != "daily" ]] && [[ "${1}" != "weekly" ]]; then
   if [[ "${launchFrom}" == "shell" ]]; then
     echo -e "${Red}Unknown parameter!${Color_Off}"
   elif [[ "${launchFrom}" == "cron" ]]; then
@@ -131,13 +132,13 @@ elif [[ "${1}" != "daily" ]] && [[ "${1}" != "weekly" ]]; then
     sendTelegram "Unknown parameter defined!"
   fi
   exit 1
-  elif [[ "${1}" == "daily" ]] || [[ "${1}" == "Daily" ]]; then
+fi
+if [[ "${1}" == "daily" ]] || [[ "${1}" == "Daily" ]]; then
+  #setting type of launch depending on the parameter we got
+  TYPE="daily"
+elif [[ "${1}" == "weekly" ]] || [[ "${1}" == "Weekly" ]]; then
     #setting type of launch depending on the parameter we got
-    TYPE="daily"
-  elif [[ "${1}" == "weekly" ]] || [[ "${1}" == "Weekly" ]]; then
-    #setting type of launch depending on the parameter we got
-    TYPE="weekly"
-  fi
+  TYPE="weekly"
 fi
 
 #getting all necessary info from config file
