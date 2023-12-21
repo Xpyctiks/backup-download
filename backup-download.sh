@@ -104,8 +104,8 @@ else
 	#getting all necessary variables from external file
     source "${confFile}"
     #checking all variables are set. No empty one.
-	if [[ -z "${dbUser}" ]] || [[ -z "${dbPass}" ]] || [[ -z "${serverList}" ]] || [[ -z "${backupsFolder}" ]] || [[ -z "${logDir}" ]] || [[ -z "${shaFileRem}" ]] || [[ -z "${shaFileLoc}" ]] \
-  || [[ -z "${shaApp}" ]] || [[ -z "${lockFile}" ]] || [[ -z "${updPerm}" ]] || [[ -z "${permFiles}" ]] || [[ -z "${permFolders}" ]]; then
+	if [[ -z "${dbUser}" || -z "${dbPass}" || -z "${serverList}" || -z "${backupsFolder}" || -z "${logDir}" || -z "${shaFileRem}" || -z "${shaFileLoc}" \
+  || -z "${shaApp}" || -z "${lockFile}" || -z "${updPerm}" || -z "${permFiles}" || -z "${permFolders}" ]]; then
     echo -e "${Red}Error! Some important variables in ${confFile} are empty!${Color_Off}"
     echo -e "${Yellow}dbUser=${dbUser}\ndbPass=${dbPass}\nserverList=${serverList}\nbackupsFolder=${backupsFolder}\nlogDir=${logDir}\nshaFileRem=${shaFileRem}\nshaFileLoc=${shaFileLoc}${Color_Off}"
     echo -e "${Yellow}shaApp=${shaApp}\nlockFile=${lockFile}\nupdPerm=${updPerm}\npermFiles=${permFiles}\npermFolders=${permFolders}${Color_Off}"
@@ -115,7 +115,7 @@ fi
 
 #Function to send messages to Telegram.Getting message as a value passed to the function: via ${1}.
 function sendTelegram() {
-  if ! [[ -z "${telegramChat}" ]] && [[ -z "${telegramToken}" ]]; then
+  if ! [[ -z "${telegramChat}" && -z "${telegramToken}" ]]; then
     #send via Telegram only when it is launched from cron.Else just show the message.
     if [[ "${launchFrom}" == "cron" ]]; then
       #test is Curl installed and available
@@ -194,11 +194,11 @@ if [[ -z "${1}" ]]; then
     sendTelegram "Launched without any parameter!"
   fi
   exit 1
-elif [[ "${1}" == "daily" ]] || [[ "${1}" == "Daily" ]]; then
+elif [[ "${1}" == "daily" || "${1}" == "Daily" ]]; then
   #setting type of launch depending on the parameter we got
   TYPE="Daily"
   TYPE2="daily"
-elif [[ "${1}" == "weekly" ]] || [[ "${1}" == "Weekly" ]]; then
+elif [[ "${1}" == "weekly" || "${1}" == "Weekly" ]]; then
   #setting type of launch depending on the parameter we got
   TYPE="Weekly"
   TYPE2="weekly"
@@ -256,7 +256,7 @@ function downloadRsync()
   fi
   LOG=""
   #check the type of allowed actions with host - "daily" only, "weekly" only, "all"
-  if [[ "${hostType}" != "${TYPE2}" ]] && [[ ${hostType} != "all" ]]; then
+  if [[ "${hostType}" != "${TYPE2}" && ${hostType} != "all" ]]; then
     if [[ "${launchFrom}" == "shell" ]]; then
       echo -e "${Red}Host ${Yellow}${hostName}${Red} is not allowed to use ${TYPE} downloading. Skipping...${Color_Off}"
     elif [[ "${launchFrom}" == "cron" ]]; then
@@ -384,7 +384,7 @@ function downloadScp()
           fi
           workArr+=("${backupsFolder}/${hostName}/${TYPE2}/${NAME}")
           Log "${hostName}" "${TYPE}" "0" "0" "${LOG}"
-          rm -f ${shaFileLoc} > /dev/null
+          rm -f "${shaFileLoc}" > /dev/null
           #Creating file which make us able to see that everything in this directory is ok
           touch sha1sum-OK
         else
@@ -503,8 +503,8 @@ fi
 #Reading  config file and parsing it
 while read hostName dnsName hostType dailyType weeklyType remScpDir scpUser remRsyncDir rsyncUser; do
   #Skipping comments strings - if anywhere is # symbol.
-  if [[ "${hostName}" == *"#"* || "${dnsName}" == *"#"* || "${hostType}" == *"#"* || "${dailyType}" == *"#"* || "${weeklyType}" == *"#"* \
-  || "${remScpDir}" == *"#"* || "${scpUser}" == *"#"* || "${remRsyncDir}" == *"#"* || "${rsyncUser}" == *"#"* ]]; then
+  if [[ "${hostName}" == *"#"* || "${dnsName}" == *"#"* || "${hostType}" == *"#"* || "${dailyType}" == *"#"* || "${weeklyType}" == *"#"* || "${remScpDir}" == *"#"* || "${scpUser}" == *"#"* \
+  || "${remRsyncDir}" == *"#"* || "${rsyncUser}" == *"#"* ]]; then
     continue
   fi
   #Check do all variables are filled by data. If not, shows up error and skipping this string
@@ -518,24 +518,24 @@ while read hostName dnsName hostType dailyType weeklyType remScpDir scpUser remR
     continue
   fi
   #Download for Daily and Weekly type with SCP 
-  if [ "${hostType}" == "${TYPE2}" ] || [ "${hostType}" == "all" ]; then
+  if [[ "${hostType}" == "${TYPE2}" || "${hostType}" == "all" ]]; then
     #Daily backup via scp
-    if  ([ "${TYPE2}" == "daily" ] && [ "${dailyType}" == "scp" ]); then
+    if  [[ "${TYPE2}" == "daily" && "${dailyType}" == "scp" ]]; then
       downloadScp "${hostName}" "${dnsName}" "${scpUser}" "${remScpDir}"
       continue
     #Weekly backup via scp
-    elif ([ "${TYPE2}" == "weekly" ] && [ "${weeklyType}" == "scp" ]); then
+    elif [[ "${TYPE2}" == "weekly" && "${weeklyType}" == "scp" ]]; then
       downloadScp "${hostName}" "${dnsName}" "${scpUser}" "${remScpDir}"
       continue
     #Daily backup via rsync
-    elif ([ "${TYPE2}" == "daily" ] && [ "${dailyType}" == "rsync" ]); then
+    elif [[ "${TYPE2}" == "daily" && "${dailyType}" == "rsync" ]]; then
       if [[ -z "${rsyncUser}" ]]; then
         rsyncUser="${scpUser}"
       fi
       downloadRsync "${hostName}" "${dnsName}" "${rsyncUser}" "${remRsyncDir}"
       continue
     #Weekly backup via rsync
-    elif ([ "${TYPE2}" == "weekly" ] && [ "${weeklyType}" == "rsync" ]); then
+    elif [[ "${TYPE2}" == "weekly" && "${weeklyType}" == "rsync" ]]; then
       if [[ -z "${rsyncUser}" ]]; then
         rsyncUser="${scpUser}"
       fi
