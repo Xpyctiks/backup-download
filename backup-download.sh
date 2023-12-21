@@ -496,20 +496,19 @@ elif [[ "${launchFrom}" == "cron" ]]; then
   if [[ "${updPerm}" != "1" ]]; then
     echo -e "${Yellow}------------Permissions update is not enabled. See README------------${Color_Off}" >> "${logDir}"/"${NAME}"-"${TYPE2}"-download.log
   fi
-  if [[ -z "${telegramChat}" ||  -z "${telegramToken}" ]]; then
+  if [[ -z "${telegramChat}" || -z "${telegramToken}" ]]; then
     echo -e "${Yellow}------------Telegram notifications are not enabled. See README------------${Color_Off}" >> "${logDir}"/"${NAME}"-"${TYPE2}"-download.log
   fi
 fi
 #Reading  config file and parsing it
 while read hostName dnsName hostType dailyType weeklyType remScpDir scpUser remRsyncDir rsyncUser; do
   #Skipping comments strings - if anywhere is # symbol.
-  if [[ "${hostName}" == *"#"* ]] || [[ "${dnsName}" == *"#"* ]] || [[ "${hostType}" == *"#"* ]] || [[ "${dailyType}" == *"#"* ]] || [[ "${weeklyType}" == *"#"* ]] \
-  || [[ "${remScpDir}" == *"#"* ]] || [[ "${scpUser}" == *"#"* ]] || [[ "${remRsyncDir}" == *"#"* ]] || [[ "${rsyncUser}" == *"#"* ]]; then
+  if [[ "${hostName}" == *"#"* || "${dnsName}" == *"#"* || "${hostType}" == *"#"* || "${dailyType}" == *"#"* || "${weeklyType}" == *"#"* \
+  || "${remScpDir}" == *"#"* || "${scpUser}" == *"#"* || "${remRsyncDir}" == *"#"* || "${rsyncUser}" == *"#"* ]]; then
     continue
   fi
   #Check do all variables are filled by data. If not, shows up error and skipping this string
-  if [[ -z "${hostName}" ]] || [[ -z "${dnsName}" ]] || [[ -z "${hostType}" ]] || [[ -z "${dailyType}" ]] || [[ -z "${weeklyType}" ]] || [[ -z "${remScpDir}" ]] \
-  || [[ -z "${scpUser}" ]]; then
+  if [[ -z "${hostName}" || -z "${dnsName}" || -z "${hostType}" || -z "${dailyType}" || -z "${weeklyType}" || -z "${remScpDir}" || -z "${scpUser}" ]]; then
     if [[ "${launchFrom}" == "shell" ]]; then
       echo -e "${Red}Error parsing string data from the config file! Some important variables are not set!${Color_Off}"
     elif [[ "${launchFrom}" == "cron" ]]; then
