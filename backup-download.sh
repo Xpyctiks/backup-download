@@ -496,7 +496,7 @@ elif [[ "${launchFrom}" == "cron" ]]; then
   if [[ "${updPerm}" != "1" ]]; then
     echo -e "${Yellow}------------Permissions update is not enabled. See README------------${Color_Off}" >> "${logDir}"/"${NAME}"-"${TYPE2}"-download.log
   fi
-  if [[ -z "${telegramChat}"]] || [[ -z "${telegramToken}"]]; then
+  if [[ -z "${telegramChat}" ||  -z "${telegramToken}" ]]; then
     echo -e "${Yellow}------------Telegram notifications are not enabled. See README------------${Color_Off}" >> "${logDir}"/"${NAME}"-"${TYPE2}"-download.log
   fi
 fi
